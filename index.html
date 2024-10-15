@@ -16,7 +16,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .header div {
@@ -24,21 +24,26 @@
             text-align: center;
         }
 
-        .header div:nth-child(1), .header div:nth-child(3) {
-            text-align: left;
+        .header div input {
+            width: 150px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
         }
 
         h1 {
             text-align: center;
-            font-size: 24px;
+            font-size: 20px;
             color: #007bff;
         }
 
         table {
-            width: 100%;
+            width: 80%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             background-color: #fff;
+            margin: 0 auto;
         }
 
         table, th, td {
@@ -46,7 +51,7 @@
         }
 
         th, td {
-            padding: 10px;
+            padding: 5px;
             text-align: center;
         }
 
@@ -61,7 +66,7 @@
         }
 
         button {
-            padding: 10px 15px;
+            padding: 8px 12px;
             margin: 5px;
             border: none;
             background-color: #007bff;
@@ -111,9 +116,9 @@
         </thead>
         <tbody>
             <tr>
-                <td><input type="text" placeholder="Enter Roll Number" oninput="fillName(this)"></td>
+                <td><input type="text" placeholder="Enter Roll Number" oninput="fillDetails(this)"></td>
                 <td><input type="text" placeholder="Name" readonly></td>
-                <td><input type="text" placeholder="Enter WhatsApp Number"></td>
+                <td><input type="text" placeholder="WhatsApp Number" readonly></td>
                 <td>
                     <select>
                         <option value="select">Select</option>
@@ -134,23 +139,27 @@
     </div>
 
     <script>
-        // Predefined roll number to name mapping
-        const rollNumberToName = {
-            '101': 'Ravi Kumar',
-            '102': 'Sita Ram',
-            '103': 'Rahul Sharma',
-            '104': 'Priya Jain',
-            '105': 'Aarav Singh'
+        // Predefined roll number to name and WhatsApp number mapping
+        const rollNumberToDetails = {
+            '101': { name: 'Ravi Kumar', whatsapp: '9876543210' },
+            '102': { name: 'Sita Ram', whatsapp: '9876543211' },
+            '103': { name: 'Rahul Sharma', whatsapp: '9876543212' },
+            '104': { name: 'Priya Jain', whatsapp: '9876543213' },
+            '105': { name: 'Aarav Singh', whatsapp: '9876543214' }
         };
 
-        // Function to auto-fill name based on roll number
-        function fillName(inputElement) {
+        // Function to auto-fill name and WhatsApp number based on roll number
+        function fillDetails(inputElement) {
             const rollNumber = inputElement.value;
             const nameInput = inputElement.parentElement.nextElementSibling.querySelector('input');
-            if (rollNumberToName[rollNumber]) {
-                nameInput.value = rollNumberToName[rollNumber];
+            const whatsappInput = inputElement.parentElement.nextElementSibling.nextElementSibling.querySelector('input');
+            
+            if (rollNumberToDetails[rollNumber]) {
+                nameInput.value = rollNumberToDetails[rollNumber].name;
+                whatsappInput.value = rollNumberToDetails[rollNumber].whatsapp;
             } else {
                 nameInput.value = ''; // Clear if no match
+                whatsappInput.value = ''; // Clear if no match
             }
         }
 
@@ -165,9 +174,9 @@
             let sendStatusCell = newRow.insertCell(4);
             let removeCell = newRow.insertCell(5);
 
-            rollCell.innerHTML = '<input type="text" placeholder="Enter Roll Number" oninput="fillName(this)">';
+            rollCell.innerHTML = '<input type="text" placeholder="Enter Roll Number" oninput="fillDetails(this)">';
             nameCell.innerHTML = '<input type="text" placeholder="Name" readonly>';
-            whatsappCell.innerHTML = '<input type="text" placeholder="Enter WhatsApp Number">';
+            whatsappCell.innerHTML = '<input type="text" placeholder="WhatsApp Number" readonly>';
             statusCell.innerHTML = `
                 <select>
                     <option value="select">Select</option>
