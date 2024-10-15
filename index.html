@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #language {
+            margin-bottom: 10px;
+        }
+
+        .hide-print {
+            display: none;
+        }
+
+        @media print {
+            .hide-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Attendance Management System</h1>
+
+    <div class="controls hide-print">
+        <label for="language">Choose Language:</label>
+        <select id="language" onchange="setLanguage()">
+            <option value="">Select</option>
+            <option value="en">English</option>
+            <option value="te">Telugu</option>
+            <option value="hi">Hindi</option>
+        </select>
+        <br><br>
+        <button onclick="addRow()">Add Row</button>
+        <button onclick="printAttendance()">Print</button>
+    </div>
+
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Date</th>
+                <th>Status (Present/Absent)</th>
+                <th class="hide-print">Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Enter name"></td>
+                <td><input type="date" value="2024-08-25"></td>
+                <td>
+                    <select>
+                        <option value="select">Select</option>
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                    </select>
+                </td>
+                <td class="hide-print"><button onclick="removeRow(this)">Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function addRow() {
+            let table = document.getElementById("attendanceTable").getElementsByTagName('tbody')[0];
+            let newRow = table.insertRow();
+            let nameCell = newRow.insertCell(0);
+            let dateCell = newRow.insertCell(1);
+            let statusCell = newRow.insertCell(2);
+            let removeCell = newRow.insertCell(3);
+
+            nameCell.innerHTML = '<input type="text" placeholder="Enter name">';
+            dateCell.innerHTML = '<input type="date" value="2024-08-25">';
+            statusCell.innerHTML = `
+                <select>
+                    <option value="select">Select</option>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                </select>`;
+            removeCell.innerHTML = '<button onclick="removeRow(this)">Remove</button>';
+        }
+
+        function removeRow(button) {
+            let row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        function printAttendance() {
+            window.print();
+        }
+
+        function setLanguage() {
+            let language = document.getElementById("language").value;
+            let labels = {
+                en: { chooseLang: "Choose Language", addRow: "Add Row", print: "Print" },
+                te: { chooseLang: "భాష ఎంచుకోండి", addRow: "వరుసను చేర్చండి", print: "ముద్రించు" },
+                hi: { chooseLang: "भाषा चुनें", addRow: "पंक्ति जोड़ें", print: "प्रिंट करें" }
+            };
+            document.querySelector('label[for="language"]').innerText = labels[language].chooseLang;
+            document.querySelector('.controls button:nth-child(2)').innerText = labels[language].addRow;
+            document.querySelector('.controls button:nth-child(3)').innerText = labels[language].print;
+        }
+    </script>
+
+</body>
+</html>
