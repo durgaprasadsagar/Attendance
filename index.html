@@ -6,22 +6,47 @@
     <title>Attendance Management System</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header div:nth-child(1) {
+            text-align: left;
+        }
+
+        .header div:nth-child(3) {
+            text-align: right;
         }
 
         h1 {
             text-align: center;
+            font-size: 24px;
+            color: #007bff;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            background-color: #fff;
         }
 
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #ddd;
         }
 
         th, td {
@@ -29,17 +54,28 @@
             text-align: center;
         }
 
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
         .controls {
             text-align: center;
             margin-bottom: 20px;
         }
 
-        #language {
-            margin-bottom: 10px;
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
-        .hide-print {
-            display: none;
+        button:hover {
+            background-color: #0056b3;
         }
 
         @media print {
@@ -47,38 +83,39 @@
                 display: none;
             }
         }
+
+        /* Styling for input and select elements */
+        input, select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Attendance Management System</h1>
-
-    <div class="controls hide-print">
-        <label for="language">Choose Language:</label>
-        <select id="language" onchange="setLanguage()">
-            <option value="">Select</option>
-            <option value="en">English</option>
-            <option value="te">Telugu</option>
-            <option value="hi">Hindi</option>
-        </select>
-        <br><br>
-        <button onclick="addRow()">Add Row</button>
-        <button onclick="printAttendance()">Print</button>
+    <div class="header">
+        <div>Class Teacher: <strong>Mrs. Sharma</strong></div>
+        <div>Class: <strong>10th Grade</strong></div>
+        <div>Date: <strong><span id="currentDate"></span></strong></div>
     </div>
+
+    <h1>Attendance Management System</h1>
 
     <table id="attendanceTable">
         <thead>
             <tr>
-                <th>Student Name</th>
-                <th>Date</th>
+                <th>Roll Number</th>
+                <th>Name</th>
                 <th>Status (Present/Absent)</th>
                 <th class="hide-print">Remove</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><input type="text" placeholder="Enter name"></td>
-                <td><input type="date" value="2024-08-25"></td>
+                <td><input type="text" placeholder="Enter Roll Number" oninput="fillName(this)"></td>
+                <td><input type="text" placeholder="Name" readonly></td>
                 <td>
                     <select>
                         <option value="select">Select</option>
@@ -91,17 +128,44 @@
         </tbody>
     </table>
 
+    <div class="controls hide-print">
+        <button onclick="addRow()">Add Row</button>
+        <button onclick="printAttendance()">Print</button>
+        <button onclick="shareWhatsApp()">Share on WhatsApp</button>
+    </div>
+
     <script>
+        // Predefined roll number to name mapping
+        const rollNumberToName = {
+            '101': 'Ravi Kumar',
+            '102': 'Sita Ram',
+            '103': 'Rahul Sharma',
+            '104': 'Priya Jain',
+            '105': 'Aarav Singh'
+        };
+
+        // Function to auto-fill name based on roll number
+        function fillName(inputElement) {
+            const rollNumber = inputElement.value;
+            const nameInput = inputElement.parentElement.nextElementSibling.querySelector('input');
+            if (rollNumberToName[rollNumber]) {
+                nameInput.value = rollNumberToName[rollNumber];
+            } else {
+                nameInput.value = ''; // Clear if no match
+            }
+        }
+
+        // Function to add a new row
         function addRow() {
             let table = document.getElementById("attendanceTable").getElementsByTagName('tbody')[0];
             let newRow = table.insertRow();
-            let nameCell = newRow.insertCell(0);
-            let dateCell = newRow.insertCell(1);
+            let rollCell = newRow.insertCell(0);
+            let nameCell = newRow.insertCell(1);
             let statusCell = newRow.insertCell(2);
             let removeCell = newRow.insertCell(3);
 
-            nameCell.innerHTML = '<input type="text" placeholder="Enter name">';
-            dateCell.innerHTML = '<input type="date" value="2024-08-25">';
+            rollCell.innerHTML = '<input type="text" placeholder="Enter Roll Number" oninput="fillName(this)">';
+            nameCell.innerHTML = '<input type="text" placeholder="Name" readonly>';
             statusCell.innerHTML = `
                 <select>
                     <option value="select">Select</option>
@@ -111,26 +175,39 @@
             removeCell.innerHTML = '<button onclick="removeRow(this)">Remove</button>';
         }
 
+        // Function to remove a row
         function removeRow(button) {
             let row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
         }
 
+        // Function to print the attendance
         function printAttendance() {
             window.print();
         }
 
-        function setLanguage() {
-            let language = document.getElementById("language").value;
-            let labels = {
-                en: { chooseLang: "Choose Language", addRow: "Add Row", print: "Print" },
-                te: { chooseLang: "భాష ఎంచుకోండి", addRow: "వరుసను చేర్చండి", print: "ముద్రించు" },
-                hi: { chooseLang: "भाषा चुनें", addRow: "पंक्ति जोड़ें", print: "प्रिंट करें" }
-            };
-            document.querySelector('label[for="language"]').innerText = labels[language].chooseLang;
-            document.querySelector('.controls button:nth-child(2)').innerText = labels[language].addRow;
-            document.querySelector('.controls button:nth-child(3)').innerText = labels[language].print;
+        // Function to share attendance via WhatsApp
+        function shareWhatsApp() {
+            let table = document.getElementById('attendanceTable');
+            let rows = table.getElementsByTagName('tr');
+            let message = "Attendance:\n\n";
+
+            for (let i = 1; i < rows.length; i++) {
+                let rollNumber = rows[i].cells[0].querySelector('input').value;
+                let name = rows[i].cells[1].querySelector('input').value;
+                let status = rows[i].cells[2].querySelector('select').value;
+
+                if (rollNumber && name && status !== 'select') {
+                    message += `Roll: ${rollNumber}, Name: ${name}, Status: ${status}\n`;
+                }
+            }
+
+            let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
         }
+
+        // Function to display the current date
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString();
     </script>
 
 </body>
