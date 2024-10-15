@@ -24,12 +24,8 @@
             text-align: center;
         }
 
-        .header div:nth-child(1) {
+        .header div:nth-child(1), .header div:nth-child(3) {
             text-align: left;
-        }
-
-        .header div:nth-child(3) {
-            text-align: right;
         }
 
         h1 {
@@ -84,7 +80,6 @@
             }
         }
 
-        /* Styling for input and select elements */
         input, select {
             padding: 5px;
             border: 1px solid #ccc;
@@ -96,9 +91,9 @@
 <body>
 
     <div class="header">
-        <div>Class Teacher: <strong>Mrs. Sharma</strong></div>
-        <div>Class: <strong>10th Grade</strong></div>
-        <div>Date: <strong><span id="currentDate"></span></strong></div>
+        <div>Class Teacher: <input type="text" id="teacherName" placeholder="Enter Teacher's Name"></div>
+        <div>Class: <input type="text" id="className" placeholder="Enter Class Name"></div>
+        <div>Date: <input type="date" id="classDate"></div>
     </div>
 
     <h1>Attendance Management System</h1>
@@ -108,7 +103,9 @@
             <tr>
                 <th>Roll Number</th>
                 <th>Name</th>
+                <th>WhatsApp Number</th>
                 <th>Status (Present/Absent)</th>
+                <th>Send Status</th>
                 <th class="hide-print">Remove</th>
             </tr>
         </thead>
@@ -116,6 +113,7 @@
             <tr>
                 <td><input type="text" placeholder="Enter Roll Number" oninput="fillName(this)"></td>
                 <td><input type="text" placeholder="Name" readonly></td>
+                <td><input type="text" placeholder="Enter WhatsApp Number"></td>
                 <td>
                     <select>
                         <option value="select">Select</option>
@@ -123,6 +121,7 @@
                         <option value="absent">Absent</option>
                     </select>
                 </td>
+                <td><input type="checkbox"></td>
                 <td class="hide-print"><button onclick="removeRow(this)">Remove</button></td>
             </tr>
         </tbody>
@@ -161,17 +160,21 @@
             let newRow = table.insertRow();
             let rollCell = newRow.insertCell(0);
             let nameCell = newRow.insertCell(1);
-            let statusCell = newRow.insertCell(2);
-            let removeCell = newRow.insertCell(3);
+            let whatsappCell = newRow.insertCell(2);
+            let statusCell = newRow.insertCell(3);
+            let sendStatusCell = newRow.insertCell(4);
+            let removeCell = newRow.insertCell(5);
 
             rollCell.innerHTML = '<input type="text" placeholder="Enter Roll Number" oninput="fillName(this)">';
             nameCell.innerHTML = '<input type="text" placeholder="Name" readonly>';
+            whatsappCell.innerHTML = '<input type="text" placeholder="Enter WhatsApp Number">';
             statusCell.innerHTML = `
                 <select>
                     <option value="select">Select</option>
                     <option value="present">Present</option>
                     <option value="absent">Absent</option>
                 </select>`;
+            sendStatusCell.innerHTML = '<input type="checkbox">';
             removeCell.innerHTML = '<button onclick="removeRow(this)">Remove</button>';
         }
 
@@ -190,24 +193,23 @@
         function shareWhatsApp() {
             let table = document.getElementById('attendanceTable');
             let rows = table.getElementsByTagName('tr');
-            let message = "Attendance:\n\n";
+            let message = `Attendance for ${document.getElementById('className').value} (${document.getElementById('classDate').value}):\n\n`;
 
             for (let i = 1; i < rows.length; i++) {
                 let rollNumber = rows[i].cells[0].querySelector('input').value;
                 let name = rows[i].cells[1].querySelector('input').value;
-                let status = rows[i].cells[2].querySelector('select').value;
+                let whatsappNumber = rows[i].cells[2].querySelector('input').value;
+                let status = rows[i].cells[3].querySelector('select').value;
+                let sendStatus = rows[i].cells[4].querySelector('input').checked;
 
-                if (rollNumber && name && status !== 'select') {
-                    message += `Roll: ${rollNumber}, Name: ${name}, Status: ${status}\n`;
+                if (rollNumber && name && whatsappNumber && status !== 'select' && sendStatus) {
+                    message += `Name: ${name}, WhatsApp: ${whatsappNumber}, Status: ${status}\n`;
                 }
             }
 
             let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
         }
-
-        // Function to display the current date
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString();
     </script>
 
 </body>
